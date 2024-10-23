@@ -1,23 +1,48 @@
 package com.example.student_api.model;
 
+
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
 public class Aluno {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String cpf;
-	private String rg;
-	private String nome;
-	private int idade;
-	private String nomeMae;
-	private String nomePai;
-	private String endereco;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    @Size(min = 11, max = 11, message = "O CPF deve ter exatamente 11 dígitos.")
+    private String cpf;
+
+    @NotNull
+    @Size(max = 20, message = "O RG deve ter no máximo 20 caracteres.")
+    private String rg;
+
+    @NotNull
+    @Size(min = 1, message = "O nome não pode estar vazio.")
+    private String nome;
+
+    @NotNull
+    private int idade;
+
+    @NotNull
+    @Size(min = 1, message = "O nome da mãe não pode estar vazio.")
+    private String nomeMae;
+
+    @NotNull
+    @Size(min = 1, message = "O nome do pai não pode estar vazio.")
+    private String nomePai;
+
+    @NotNull
+    @Size(min = 1, message = "O endereço não pode estar vazio.")
+    private String endereco;
 
 	public Long getId() {
 		return id;
