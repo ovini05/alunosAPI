@@ -1,6 +1,5 @@
 package com.example.student_api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,40 +10,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.student_api.model.Aluno;
-import com.example.student_api.repository.AlunoRepository;
+import com.example.student_api.model.ApiResponse;
+import com.example.student_api.service.AlunoService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/alunos")
 public class AlunoController {
 
-	@Autowired
-	private AlunoRepository alunoRepository;
+    private final AlunoService alunoService;
 
-	@PostMapping
-	public Aluno salvarAluno(@RequestBody Aluno aluno) {
-		return alunoRepository.save(aluno);
-	}
+    
+    public AlunoController(AlunoService alunoService) {
+        this.alunoService = alunoService;
+    }
 
-	@DeleteMapping("/{cpf}")
-	public ResponseEntity<Aluno> buscarAlunoPorCpf(@PathVariable String cpf) {
-		Aluno aluno = alunoRepository.findByCpf(cpf);
-		if (aluno != null) {
-			return ResponseEntity.ok(aluno);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+    @PostMapping
+    public ResponseEntity<ApiResponse<Aluno>> salvarAluno(@Valid @RequestBody Aluno aluno) {
+        Aluno savedAluno = alunoService.save(aluno);
+        return ResponseEntity.ok(new ApiResponse<>("Aluno salvo com sucesso!", savedAluno));
+    }
 
-	}
+    @GetMapping("/{cpf}")
+    public ResponseEntity<ApiResponse<Aluno>> buscarAlunoPorCpf(@PathVariable String cpf) {
+        Aluno aluno = alunoService.findByCpf(cpf);
+        return ResponseEntity.ok(new ApiResponse<>("Aluno encontrado!", aluno));
+    }
 
-	@GetMapping
-	public ResponseEntity<Void> deletarAluno(@PathVariable String cpf) {
-		Aluno aluno = alunoRepository.findByCpf(cpf);
-		if (aluno != null) {
-			alunoRepository.delete(aluno);
-			return ResponseEntity.ok().build();
-		} else {
-			return ResponseEntity.notFound().build();
-		}
-	}
-
+    @DeleteMapping("/{cpf}")
+    public ResponseEntity<ApiResponse<Void>> deletarAluno(@PathVariable String cpf) {
+        alunoService.deleteByCpf(cpf);
+        return ResponseEntity.ok(new ApiResponse<>("Aluno deletado com sucesso!", null));
+    }
 }
