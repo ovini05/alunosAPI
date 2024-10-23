@@ -1,5 +1,9 @@
 package com.example.student_api.repository;
 
-public class AlunoRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.example.student_api.model.Aluno;
+
+public interface AlunoRepository extends JpaRepository<Aluno, Long> {
+	Aluno findByCpf(String cpf);
 }
